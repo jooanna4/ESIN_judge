@@ -1,0 +1,8 @@
+// Grandaria maxima del multiconjunt
+const static unsigned int MAX_SIZE = 100;
+
+// Mesura exacta del multiconjunt
+int size;
+
+// Multiconjunt
+int v[MAX_SIZE];
