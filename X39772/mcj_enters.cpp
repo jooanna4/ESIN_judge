@@ -37,7 +37,33 @@ void mcj_enters::insereix(int e) {
 // el mètode, usant el segon multiconjunt com argument. P.e.: a.restar(b) fa que el nou valor d’a sigui
 // A - B, on A i B són els valors originals dels objectes a i b.
 void mcj_enters::unir(const mcj_enters& B) {
-    
+    if (*this == B) return;
+    else {
+        int aux[size];
+        int i = 0, j = 0, it = 0;
+        while ((i < size) or (j < B.size)) {
+            if (v[i] == B.v[j]) {
+                i++; j++;
+                aux[it] = v[i];
+                it++;
+            }
+            else if (v[i] < B.v[j]) {
+                i++;
+                aux[it] = v[i];
+                it++;
+            }
+            else {
+                j++;
+                aux[it] = B.v[j];
+                it++;
+            }
+        }
+        size = it;
+        // Copia de la intersecció
+        for (int i = 0; i < size; i++) {
+            v[i] = aux[i];
+        }
+    }
 }
 
 void mcj_enters::intersectar(const mcj_enters& B) {
