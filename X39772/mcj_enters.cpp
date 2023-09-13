@@ -44,14 +44,14 @@ void mcj_enters::intersectar(const mcj_enters& B) {
     if (*this == B) return;
     else {
         int aux[size];
-        int i = 0, j = 0, mida, it = 0;
+        int i = 0, j = 0, it = 0;
         while ((i < size) or (j < B.size)) {
             if (v[i] == B.v[j]) {
                 i++; j++;
                 aux[it] = v[i];
                 it++;
             }
-            else if (v[i] < B.v[j]) i++
+            else if (v[i] < B.v[j]) i++;
             else j++;
         }
         size = it;
