@@ -2,7 +2,7 @@
 const static unsigned int MAX_SIZE = 100;
 
 // Mesura exacta del multiconjunt
-int size;
+unsigned int size;
 
 // Multiconjunt
 int v[MAX_SIZE];
