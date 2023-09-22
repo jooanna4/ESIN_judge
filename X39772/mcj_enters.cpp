@@ -5,10 +5,10 @@ mcj_enters::mcj_enters() { size = 0; }
 
 // Les tres grans: Constructora per còpia, destructora, operador d'assignació
 mcj_enters::mcj_enters(const mcj_enters &cj) {
+    size = cj.size;
     for (int i = 0; i < size; i++) {
         v[i] = cj.v[i];
     }
-    size = cj.size;
 }
 
 mcj_enters::~mcj_enters() { }
@@ -24,12 +24,28 @@ mcj_enters& mcj_enters::operator=(const mcj_enters &cj) {
 // Insereix l’enter e en el multiconjunt.
 void mcj_enters::insereix(int e) {
     int aux;
-    for (int i = 0; i < size; i++) 
-        if (e <= v[i]) aux = i;
-    for (int i = size; aux < i; i--) {
-        v[i+1] = v[i];
+    bool trobat = false;
+    if (size == 0) {
+        v[0] = e;
+        size++;
+        return;
     }
-    v[aux] = e;
+    for (int i = 0; i < size; i++) {
+        if (e <= v[i]) {
+            aux = i;
+            trobat = true;
+            break;
+        }
+    }
+    if (trobat) {
+        for (int i = size; aux < i; i--) {
+            v[i] = v[i-1];
+        }
+        v[aux] = e;
+    }
+    else {
+        v[size] = e;
+    }
     size++;
 }
 
@@ -37,74 +53,101 @@ void mcj_enters::insereix(int e) {
 // el mètode, usant el segon multiconjunt com argument. P.e.: a.restar(b) fa que el nou valor d’a sigui
 // A - B, on A i B són els valors originals dels objectes a i b.
 void mcj_enters::unir(const mcj_enters& B) {
-    if (*this == B) return;
-    else {
-        int aux[size];
-        int i = 0, j = 0, it = 0;
-        while ((i < size) or (j < B.size)) {
-            if (v[i] == B.v[j]) {
-                i++; j++;
-                aux[it] = v[i];
-                it++;
-            }
-            else if (v[i] < B.v[j]) {
-                i++;
-                aux[it] = v[i];
-                it++;
-            }
-            else {
-                j++;
-                aux[it] = B.v[j];
-                it++;
-            }
-        }
-        size = it;
-        // Copia de la intersecció
-        for (int i = 0; i < size; i++) {
-            v[i] = aux[i];
-        }
-    }
+    *this = (*this)+B;
 }
 
 void mcj_enters::intersectar(const mcj_enters& B) {
-    if (*this == B) return;
-    else {
-        int aux[size];
-        int i = 0, j = 0, it = 0;
-        while ((i < size) or (j < B.size)) {
-            if (v[i] == B.v[j]) {
-                i++; j++;
-                aux[it] = v[i];
-                it++;
-            }
-            else if (v[i] < B.v[j]) i++;
-            else j++;
-        }
-        size = it;
-        // Copia de la intersecció
-        for (int i = 0; i < size; i++) {
-            v[i] = aux[i];
-        }
-    }
+    *this = (*this)*B;
 }
 
 void mcj_enters::restar(const mcj_enters& B) {
-
+    *this = (*this)-B;
 }
 
 // Unió, intersecció i diferència de multiconjunts. Operen creant un nou multiconjunt sense modificar el con-
 // junt sobre el que s’aplica el mètode. La suma de multiconjunts correspon a la unió, la resta a la
 // diferència i el producte a la intersecció.
 mcj_enters mcj_enters::operator+(const mcj_enters& B) const {
+    mcj_enters aux;
+    
+    if (size == 0 and B.size != 0) aux = B;
+    else if (size != 0 and B.size == 0) aux = *this;
+    else if (*this == B) aux = *this;
+    else if (size != 0 and B.size != 0) {
+        int i = 0, j = 0;
+        while ((i < size) and (j < B.size)) {
+            if (v[i] == B.v[j]) {
+                aux.insereix(v[i]);
+                i++; j++;
+            }
+            else if (v[i] < B.v[j]) {
+                aux.insereix(v[i]);
+                i++;
+            }
+            else {
+                aux.insereix(B.v[j]);
+                j++;
+            }
+        }
+        if (i == size) {
+            while (j < B.size) {
+                aux.insereix(B.v[j]);
+                j++;
+            }
+        }
+        else {
+            while (i < size) {
+                aux.insereix(v[i]);
+                i++;
+            }
+        }
+    }
 
+    return aux;
 }
 
 mcj_enters mcj_enters::operator*(const mcj_enters& B) const {
+    mcj_enters aux;
+    
+    if (*this == B) aux = *this;
+    else if (size != 0 and B.size != 0) {
+        int i = 0, j = 0;
+        while ((i < size) and (j < B.size)) {
+            if (v[i] == B.v[j]) {
+                aux.insereix(v[i]);
+                i++; j++;
+            }
+            else if (v[i] < B.v[j]) i++;
+            else j++;
+        }
+    }
 
+    return aux;
 }
 
 mcj_enters mcj_enters::operator-(const mcj_enters& B) const {
+    mcj_enters aux;
+    
+    if (size != 0 and B.size == 0) aux = *this;
+    else if (size != 0 and B.size != 0) {
+        int i = 0, j = 0;
+        while ((i < size) and (j < B.size)) {
+            if (v[i] == B.v[j]) {
+                i++; j++;
+            }
+            else if (v[i] < B.v[j]) {
+                aux.insereix(v[i]);
+                i++;
+            }
+            else j++;
+        }
+        while (i < size) {
+            aux.insereix(v[i]);
+            i++;
+        }
+    }
 
+    return aux;
 }
 
 // Retorna cert si i només si e pertany al multiconjunt.
@@ -139,6 +182,7 @@ int mcj_enters::card() const {
 // mateixos elements; != retorna cert si i només si els
 // multiconjunts són diferents.
 bool mcj_enters::operator==(const mcj_enters& B) const {
+    if (size != B.size) return false;
     for (int i = 0; i < size; i++) {
         if (v[i] != B.v[i]) return false;
     }
@@ -146,7 +190,7 @@ bool mcj_enters::operator==(const mcj_enters& B) const {
 }
 
 bool mcj_enters::operator!=(const mcj_enters& B) const {
-    return !(this == B);
+    return !(*this == B);
 }
 
 
