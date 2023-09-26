@@ -37,30 +37,49 @@
  };
  
  // Aquí va la implementació del mètode públic fusiona i privats addicionals
+template <typename T>
 void pila<T>::fusiona(const pila<T> &p2) {
-    if (_cim == nullptr and p2._cim == nullptr) return;
+    if (p2._cim == nullptr) return;
     
-    node *pi = _cim, *pj = p2._cim, *aux = _cim;
-    while() {
-        if (pi != nullptr or pi->info > pj->info) {
-            aux = pi;
-            pi = pi->seg;
+    node *pi = _cim, *pj = p2._cim, *aux;
+    _mida += p2._mida;
+
+    if (pi == nullptr and pj != nullptr) {
+        _cim = new node;
+        _cim->info = pj->info;
+        _cim->seg = nullptr;
+        pj = pj->seg;
+        aux = _cim;
+    }
+    else if (pj->info > pi->info) {
+        _cim = new node;
+        _cim->info = pj->info;
+        _cim->seg = pi;
+        pj = pj->seg;
+        pi = _cim;
+    }
+    while (pi != nullptr and pj != nullptr) {
+        aux = pi->seg;
+
+        if (aux == nullptr) {
+            node *pnou = new node;
+            pnou->info = pj->info;
+            pi->seg = pnou;
+            pnou->seg = nullptr;
+            pj = pj->seg;
         }
+
+        else if (pj->info < aux->info) 
+            aux = aux->seg;
+
         else {
             node *pnou = new node;
             pnou->info = pj->info;
-            if (pi == _cim) {
-                pnou->seg = _cim;
-                _cim = pnou;
-                aux = pnou;
-            }
-            else {
-                aux->seg = pnou;
-                pnou->seg = pi;
-                aux = aux->seg;
-            }
+            pi->seg = pnou;
+            pnou->seg = aux;
             pj = pj->seg;
         }
-    }
 
+        pi = pi->seg;
+    }
 }
