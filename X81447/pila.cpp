@@ -40,7 +40,7 @@
 template <typename T>
 void pila<T>::fusiona(const pila<T> &p2) {
     if (p2._cim == nullptr) return;
-    
+
     node *pi = _cim, *pj = p2._cim, *aux;
     _mida += p2._mida;
 
@@ -49,19 +49,23 @@ void pila<T>::fusiona(const pila<T> &p2) {
         _cim->info = pj->info;
         _cim->seg = nullptr;
         pj = pj->seg;
+        pi = _cim;
         aux = _cim;
     }
-    else if (pj->info > pi->info) {
+    else if (pj->info < pi->info) {
         _cim = new node;
         _cim->info = pj->info;
         _cim->seg = pi;
         pj = pj->seg;
         pi = _cim;
     }
-    while (pi != nullptr and pj != nullptr) {
+    else
+        aux = _cim;
+    
+    while (pj != nullptr) {
         aux = pi->seg;
 
-        if (aux == nullptr) {
+        if (aux == nullptr and pj != nullptr) {
             node *pnou = new node;
             pnou->info = pj->info;
             pi->seg = pnou;
@@ -69,7 +73,7 @@ void pila<T>::fusiona(const pila<T> &p2) {
             pj = pj->seg;
         }
 
-        else if (pj->info < aux->info) 
+        else if (pj->info > aux->info) 
             aux = aux->seg;
 
         else {
