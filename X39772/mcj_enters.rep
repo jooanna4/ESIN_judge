@@ -1,5 +1,5 @@
 // Grandaria maxima del multiconjunt
-const static unsigned int MAX_SIZE = 100;
+const static unsigned int MAX_SIZE = 10000;
 
 // Mesura exacta del multiconjunt
 unsigned int size;

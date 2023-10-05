@@ -74,33 +74,35 @@ mcj_enters mcj_enters::operator+(const mcj_enters& B) const {
     else if (size != 0 and B.size == 0) aux = *this;
     else if (*this == B) aux = *this;
     else if (size != 0 and B.size != 0) {
-        int i = 0, j = 0;
+        int i = 0, j = 0, k = 0;
         while ((i < size) and (j < B.size)) {
             if (v[i] == B.v[j]) {
-                aux.insereix(v[i]);
-                i++; j++;
+                aux.v[k] = v[i];
+                i++; j++; k++;
             }
             else if (v[i] < B.v[j]) {
-                aux.insereix(v[i]);
-                i++;
+                aux.v[k] = v[i];
+                i++; k++;
             }
             else {
-                aux.insereix(B.v[j]);
-                j++;
+                aux.v[k] = B.v[j];
+                j++; k++;
             }
         }
         if (i == size) {
             while (j < B.size) {
-                aux.insereix(B.v[j]);
-                j++;
+                aux.v[k] = B.v[j];
+                j++; k++;
             }
         }
         else {
             while (i < size) {
-                aux.insereix(v[i]);
-                i++;
+                aux.v[k] = v[i];
+                i++; k++;
             }
         }
+        
+        aux.size = k;
     }
 
     return aux;
