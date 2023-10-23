@@ -1,4 +1,4 @@
-include <cstdlib>
+#include <cstdlib>
 #include <iostream>
 using namespace std;
 typedef unsigned int nat;
