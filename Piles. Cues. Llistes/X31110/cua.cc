@@ -39,48 +39,45 @@ class cua { // Cua no circular en memòria dinàmica
 // Aquí va la implementació del mètode públic fusiona i privats addicionals
 template <typename T>
 void cua<T>::fusiona(const cua<T> &c2) {
-    if (c2._pri == nullptr and c2._ult == nullptr) return;
-
+    node *pi(_pri), *p2(c2._pri), *pant;
+    if (c2._pri == nullptr)
+      return;
+    
     _mida += c2._mida;
-    node *pi = _pri, *pj = c2._pri, *aux = pi->seg;
 
-    if (_pri == nullptr and _ult == nullptr) {
+    if (p2->info < pi->info) {
+      node *pnou = new node;
+      pnou->info = p2->info;
+      pnou->seg = pi;
+      _pri = pnou;
+      pant = _pri;
+      p2 = p2->seg;
+    }
+    else {
+      pant = pi;
+      pi = pi->seg;
+    }
+
+    while (p2 != nullptr) {
+      if (pi == nullptr) {
         node *pnou = new node;
-        pnou->info = pj->info;
-        _pri = pnou;
+        pnou->info = p2->info;
+        pant->seg = pnou;
+        pnou->seg = nullptr;
         _ult = pnou;
-        _pri->seg = nullptr;
-    }
-    else if (pj->info < pi->info) {
+        p2 = p2->seg;
+      }
+      else if (p2->info < pi->info) {
         node *pnou = new node;
-        pnou->info = pj->info;
+        pnou->info = p2->info;
+        pant->seg = pnou;
         pnou->seg = pi;
-        _pri = pnou;
-        pi = _pri;
-        aux = pi->seg;
-        pj = pj->seg;
-    }
-
-    while (pj != nullptr) {
-        if (aux == nullptr) {
-            node *pnou = new node;
-            pnou->info = pj->info;
-            pi->seg = pnou;
-            pnou->seg = nullptr;
-            _ult = pnou;
-            pj = pj->seg;
-        }
-
-        else if (pj->info < aux->info) {
-            node *pnou = new node;
-            pnou->info = pj->info;
-            pnou->seg = aux;
-            pi->seg = pnou;
-        }
-
-        else
-            aux = aux->seg;
-        
+        pant = pant->seg;
+        p2 = p2->seg;
+      }
+      else {
         pi = pi->seg;
+        pant = pant->seg;
+      }
     }
 }
