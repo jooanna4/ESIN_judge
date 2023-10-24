@@ -40,6 +40,24 @@ class Abin {
     static void print_nodes(node* m, ostream &os, string d1);
 
     // Aquí va l’especificació dels mètodes privats addicionals
+    static void suma(node *m);
 };
  
 // Aquí va la implementació del mètode arbre_sumes
+template <typename T>
+void Abin<T>::arbre_sumes() {
+  suma (_arrel);
+}
+
+template <typename T>
+void Abin<T>::suma (node *m) {
+  if (m != nullptr) {
+    suma (m->f_esq);
+    suma (m->f_dret);
+
+    int i = m->info;
+    if (m->f_esq != nullptr) i += m->f_esq->info;
+    if (m->f_dret != nullptr) i += m->f_dret->info;
+    m->info = i;
+  }
+}
