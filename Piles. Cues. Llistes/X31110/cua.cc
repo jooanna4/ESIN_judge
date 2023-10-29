@@ -39,45 +39,66 @@ class cua { // Cua no circular en memòria dinàmica
 // Aquí va la implementació del mètode públic fusiona i privats addicionals
 template <typename T>
 void cua<T>::fusiona(const cua<T> &c2) {
-    node *pi(_pri), *p2(c2._pri), *pant;
-    if (c2._pri == nullptr)
+    node *p1(_pri), *p2(c2._pri), *pant;
+    if (p2 == nullptr)
       return;
-    
-    _mida += c2._mida;
-
-    if (p2->info < pi->info) {
-      node *pnou = new node;
-      pnou->info = p2->info;
-      pnou->seg = pi;
-      _pri = pnou;
-      pant = _pri;
+    else if (p1 == nullptr) {
+      _pri = new node;
+      _pri->info = p2->info;
+      _pri->seg = nullptr;
+      _ult = _pri;
+      p1 = _pri;
       p2 = p2->seg;
-    }
-    else {
-      pant = pi;
-      pi = pi->seg;
-    }
-
-    while (p2 != nullptr) {
-      if (pi == nullptr) {
+      while (p2 != nullptr) {
         node *pnou = new node;
         pnou->info = p2->info;
-        pant->seg = pnou;
+        p1->seg = pnou;
         pnou->seg = nullptr;
         _ult = pnou;
+        p1 = p1->seg;
         p2 = p2->seg;
       }
-      else if (p2->info < pi->info) {
-        node *pnou = new node;
+      _mida = c2._mida;
+      return;
+    }
+    else {
+      node *pnou = new node;
+      if (p2->info < p1->info) {
         pnou->info = p2->info;
-        pant->seg = pnou;
-        pnou->seg = pi;
-        pant = pant->seg;
+        pnou->seg = p1;
+        _pri = pnou;
+        pant = pnou;
         p2 = p2->seg;
+        _mida++;
       }
       else {
-        pi = pi->seg;
-        pant = pant->seg;
+        pant = p1;
+        p1 = p1->seg;
+      }
+      while (p2 != nullptr) {
+        if (p1 == nullptr) {
+          pnou = new node;
+          pnou->info = p2->info;
+          pant->seg = pnou;
+          pnou->seg = p1;
+          pant = pant->seg;
+          p2 = p2->seg;
+          _ult = pnou;
+          _mida++;
+        }
+        else if (p2->info < p1->info) {
+          pnou = new node;
+          pnou->info = p2->info;
+          pant->seg = pnou;
+          pnou->seg = p1;
+          pant = pant->seg;
+          p2 = p2->seg;
+          _mida++;
+        }
+        else {
+          p1 = p1->seg;
+          pant = pant->seg;
+        }
       }
     }
 }
