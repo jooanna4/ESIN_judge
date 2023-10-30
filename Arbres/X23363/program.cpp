@@ -41,7 +41,7 @@ private:
   static void preordre(node *p, string pre);
 
   // Aquí va l’especificació dels mètodes privats addicionals
-  static void altures(node *a, nat i);
+  static void altures(node *a, nat &i);
 };
 
 // Aquí va la implementació del mètode arbre_altures i privats addicionals
@@ -52,18 +52,16 @@ void Arbre<T>::arbre_altures() {
 }
 
 template <typename T>
-void Arbre<T>::altures(node *a, nat i) {
+void Arbre<T>::altures(node *a, nat &i) {
     i = 1;
     if (a == nullptr) return;
         int max = 0;
-        node *aux = new node;
-        aux = a->primf;
+        node *aux = a->primf;
         while (aux != nullptr) {
-            arbre_altures(aux, i);
+            altures(aux, i);
             if (aux->info > max) max = aux->info;
             aux = aux->seggerm;
         }
         if (a->primf != nullptr) a->info = max + 1;
         else a->info = i;
-    
 }
