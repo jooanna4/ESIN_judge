@@ -32,9 +32,18 @@ class dicc {
     static node* insereix(node *t, nat i, const string &k);
 
     // Aquí va l’especificació dels mètodes privats addicionals
+    nat long_max(node *n);
 };
 
 // Aquí va la implementació del mètode públic freq_longituds i privats addicionals
 vector<nat> dicc::freq_longituds() const {
+    nat long_max(_arrel);
+    vector<nat> res;
     
+}
+
+nat dicc::long_max(node *n) {
+  if (n != nullptr) {
+    
+  }
 }
