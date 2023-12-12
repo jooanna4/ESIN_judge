@@ -36,5 +36,5 @@ class dicc {
 
 // Aquí va la implementació del mètode públic freq_longituds i privats addicionals
 vector<nat> dicc::freq_longituds() const {
-
+    
 }
