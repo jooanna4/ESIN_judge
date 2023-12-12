@@ -51,36 +51,30 @@ class dicc {
 // Aquí va la implementació dels mètodes públics insereix, interseccio i
 // dels mètodes privats addicionals
 void dicc::insereix(const int &k) {
-  long i = h(k);
-  node_hash *p = _taula[i];
+  long i = h(k) % _M;
+  node_hash *p = _taula[i], *pant(nullptr);
   bool found (false);
-  if (p == nullptr) {
-    _taula[i] = new node_hash;
-    _taula[i]->_k = k;
-    _taula[i]->_seg = nullptr;
-    ++_quants;
+  while (p != nullptr and not found and p->_k <= k) {
+    if (p->_k == k)
+      found = true;
+    else {
+      pant = p;
+      p = p->_seg;
+    }
   }
-  else {
-    while (p->_seg != nullptr and not found) {
-      if (p->_k == k)
-        found = true;
-      else 
-        p = p->_seg;
-    }
-    if (not found) {
-      node_hash *aux = new node_hash;
-      aux->_k = k;
-      aux->_seg = p;
-      _taula[i] = aux;
-      ++_quants;
-    }
+  if (not found) {
+    node_hash *aux = new node_hash;
+    aux->_k = k;
+    aux->_seg = p;
+    if (pant != nullptr) pant->_seg = aux;
+    else _taula[i] = aux;
+    ++_quants;
   }
 }
 
 void dicc::interseccio(dicc &d2, dicc &res) {
   for (nat i = 0; i < _M; i++) {
     node_hash *aux = _taula[i];
-    aux = aux->_seg;
     while (aux != nullptr) {
       if (conte(aux->_k, d2))
         res.insereix(aux->_k);
@@ -90,7 +84,7 @@ void dicc::interseccio(dicc &d2, dicc &res) {
 }
 
 bool dicc::conte(int k, dicc &d2) {
-  long i = h(k);
+  long i = d2.h(k) % d2._M;
   node_hash *p = d2._taula[i];
   bool found(false);
   while (p != nullptr && not found) {
