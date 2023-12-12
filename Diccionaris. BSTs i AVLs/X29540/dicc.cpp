@@ -32,48 +32,69 @@ class dicc {
     static void esborra_nodes(node* m);
 
     // Aquí va l’especificació dels mètodes privats addicionals
-    bool conteclau(node *n);
-    node* insereixClau(node *n, Clau k, Clau &desequilibri, int &factor);
-    int factor_equilibri(node *n);
-    nat altura(node *n);
+    int altura (node * n);
+    int factor_equilibri (node * n);
+    node* insereix_bst(node *n, const Clau &k, pair<Clau, char> &res);
+};
+
+template <typename Clau>
+int dicc<Clau>::altura (node * n)
+{
+	if (n == nullptr)
+		return 0;
+	return n->_h ;
+}
+
+template <typename Clau>
+int dicc <Clau>:: factor_equilibri (node * n)
+{
+	if (n == nullptr)
+		return 0;
+	return altura (n->_dret) - altura (n ->_esq );
+}
+
+template <typename Clau>
+typename dicc<Clau>::node* dicc<Clau>::insereix_bst(node *n, const Clau &k, pair<Clau, char> &res)
+{
+	// 1. Fem la inserció a un BST normal
+	if (n == nullptr ) {
+		n = new node;
+		n->_k = k;
+		n->_h = 1;
+		n->_esq = nullptr;
+		n->_dret = nullptr;
+	}
+	else {
+		if (k < n->_k)
+			n->_esq = insereix_bst (n->_esq , k , res);
+		else if (k > n->_k)
+			n->_dret = insereix_bst (n->_dret , k , res);
+	}
+	
+	n->_h = max (altura (n->_esq) , altura (n->_dret)) + 1;
+	
+	int fe = factor_equilibri(n);
+	
+	if (res.second == ' ') {
+		if (fe > 1) {
+			res.first = n->_k;
+			res.second  = 'D';
+		}
+		if (fe < -1) {
+			res.first = n->_k;
+			res.second = 'E';
+		}
+	}
+
+	return n;
 };
 
 // Aquí va la implementació dels mètodes públics i privats
-pair<Clau, char> dicc<Clau>::insereix(const Clau &k) {
-    Clau c;
-    int fact;
-    if (not conteclau(_arrel))
-        insereixClau(_arrel, k, c, fact);
-}
-
-int dicc<Clau>::factor_equilibri(node *n) {
-    return n->_esq->_h - n->_dret->_h;
-}
-
-nat dicc<Clau>::altura(node *n) {
-    if (n != nullptr)
-        return n->_h;
-    else
-        return 0;
-}
-
-dicc<Clau>::node* dicc<Clau>::insereixClau(node *n, Clau k, Clau &desequilibri, int &factor) {
-    if (n != nullptr) {
-        if (k < n->_k)
-            n->_esq = insereixClau(n->_esq);
-        else
-            n->_dret = insereixClau(n->_dret);
-        
-        n->_h = max(altura(n->_dret), altura(n->_esq)) + 1;
-        factor = factor_equilibri(n);
-        
-    }
-    else {
-        n = new node;
-        n->_k = k;
-        n->_esq = nullptr;
-        n->_dret = nullptr;
-        n->_h = 1;
-    }
-    
+template <typename Clau>
+pair<Clau, char> dicc<Clau>::insereix(const Clau &k)
+{
+	pair<Clau, char> res;
+	res.second = ' ' ;
+	_arrel = insereix_bst(_arrel, k, res);
+	return res;
 }

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sstream>
-#include "dicc.hpp"
 using namespace std;
 
 long dicc::h(int k) {
@@ -13,7 +12,7 @@ long dicc::h(int k) {
 dicc::dicc() : _quants(0) {
   _M = 13;
   _taula = new node_hash*[_M];
-  for (nat i=0; i < _M; ++i) {
+  for (int i=0; i < _M; ++i) {
     _taula[i] = NULL;
   }
 }
@@ -26,7 +25,7 @@ void dicc::esborra_nodes(node_hash *p) {
 };
 
 dicc::~dicc() {
-  for (nat i=0; i < _M; ++i) {
+  for (int i=0; i < _M; ++i) {
     esborra_nodes(_taula[i]);
   }
   delete _taula;
@@ -37,7 +36,7 @@ nat dicc::quants() const {
 }
 
 void dicc::print() const {
-  for (nat i=0; i < _M; ++i) {
+  for (int i=0; i < _M; ++i) {
     cout << i << ": ";
     node_hash *p = _taula[i];
     while (p != NULL) {
