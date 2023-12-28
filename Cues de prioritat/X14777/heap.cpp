@@ -34,6 +34,9 @@ class heap {
     // Pre: El heap no és buit
     // Post: S’ha eliminat l’element mínim del heap o qualsevol d’ells si està repetit
 
+    template <class U> friend std::ostream& operator<<(std::ostream&, const Abin<U> &a);
+    void print_nodes(node* m, ostream &os, string d1);
+
   private:
     struct node {
       node* fesq;  // Punter al fill esquerre
@@ -53,79 +56,56 @@ class heap {
     // pare_ult conté el punter del pare de l’últim element del heap (NULL si no en té)
 
     // Aquí va l’especificació dels mètodes privats addicionals
-    static node *ajunta(node *ne, node *nd);
-    static node* troba_maxim(node *n);
     static void enfonsa(node *n);
 };
 
 // Aquí va la implementació del mètode elim_min
 template <typename T>
 void heap<T>::elim_min() {
-    if (_nelems == 0)
+    node *ult, *pare_ult;
+    ultim(ult, pare_ult);
+    if (ult == nullptr)                 // no té cap element
         return;
-    else if (_nelems == 1) {
-        delete(_arrel);
+    else if (pare_ult == nullptr) {     // té un element
+        delete (_arrel);
         _arrel = nullptr;
-        _nelems = 0;
     }
-    else {
-        node *elim = _arrel;
-        _arrel = ajunta(_arrel->fesq, _arrel->fdret);
-        delete(elim);
+    else {                              // té més d'un element
+        if (pare_ult->fesq == ult)
+            pare_ult->fesq = nullptr;
+        else
+            pare_ult->fdret = nullptr;
+        _arrel->info = ult->info;
+        delete(ult);
         enfonsa(_arrel);
-        --_nelems;
     }
-}
-
-template <typename T>
-typename heap<T>::node* heap<T>::ajunta(node *ne, node *nd) {
-    node *n;
-    if (nd == nullptr) 
-        n = ne;
-    else if (ne == nullptr)
-        n = nd;
-    else if (ne->fdret ==  nullptr) {
-        n = ne;
-        n->fdret = nd;
-    }
-    else {
-        n = troba_maxim(ne);
-        n->fdret = nd;
-    }
-    return n;
-}
-
-template <typename T>
-typename heap<T>::node* heap<T>::troba_maxim(node *n) {
-// Pre: n != nullptr
-    node *aux = n, *pare(nullptr);
-    while (aux->fdret != nullptr) {
-        pare = aux;
-        aux = aux->fdret;
-    }
-
-    if (pare != nullptr)
-        pare->fdret = aux->fesq;
-    
-    aux->fesq = n;
-
-    return aux;
+    _nelems--;
 }
 
 template <typename T>
 void heap<T>::enfonsa(node *n) {
-    node *enfonsat(n), *aux(n->fesq);
-    if (aux == nullptr)
-        aux = n->fdret;
-    while (aux != nullptr) {
-        if (aux->info < enfonsat->info) {
-            T canvi(enfonsat->info);
-            enfonsat->info = aux->info;
-            aux->info = canvi;
-            enfonsat = aux;
-            aux = aux->fdret;
-        }
-        else
-            break;
-    }
+    node *enfonsat(n), *aux;
+    
+}
+
+template <typename U>
+ostream& operator<<(ostream &os, const heap<U> &a) {
+  a.print_nodes(a._arrel, os, "");
+  os << "\n";
+  return os;
+}
+
+template <typename T>
+void heap<T>::print_nodes(node* p, ostream &os, string prefix) {
+  if (p == nullptr) 
+    os << ".";
+  else {
+    string prefix2;
+    os << "["<<p->info << "]\n" << prefix << " \\__";
+    prefix2 = prefix + " |  ";
+    print_nodes(p->f_dret, os, prefix2);
+    os << "\n" << prefix << " \\__";
+    prefix2 = prefix + "    ";
+    print_nodes(p->f_esq, os, prefix2);
+  }
 }
