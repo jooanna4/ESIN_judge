@@ -34,9 +34,7 @@ class heap {
     // Pre: El heap no és buit
     // Post: S’ha eliminat l’element mínim del heap o qualsevol d’ells si està repetit
 
-    template <class U> friend std::ostream& operator<<(std::ostream&, const Abin<U> &a);
-    void print_nodes(node* m, ostream &os, string d1);
-
+    
   private:
     struct node {
       node* fesq;  // Punter al fill esquerre
@@ -84,28 +82,42 @@ void heap<T>::elim_min() {
 
 template <typename T>
 void heap<T>::enfonsa(node *n) {
-    node *enfonsat(n), *aux;
-    
-}
+  if (n->fdret == nullptr && n->fesq == nullptr)                  // No té fills
+    return;
+  
+  else if (n->fesq == nullptr || n->fdret == nullptr) {           // Te un fill
+    if (n->fesq != nullptr && n->fesq->info < n->info) {
+      T aux = n->info;
+      n->info = n->fesq->info;
+      n->fesq->info = aux;
+      enfonsa(n->fesq);
+    }
 
-template <typename U>
-ostream& operator<<(ostream &os, const heap<U> &a) {
-  a.print_nodes(a._arrel, os, "");
-  os << "\n";
-  return os;
-}
+    else if (n->fdret != nullptr && n->fdret->info < n->info) {
+      T aux = n->info;
+      n->info = n->fdret->info;
+      n->fdret->info = aux;
+      enfonsa(n->fdret);
+    }
+    return;
+  }
 
-template <typename T>
-void heap<T>::print_nodes(node* p, ostream &os, string prefix) {
-  if (p == nullptr) 
-    os << ".";
   else {
-    string prefix2;
-    os << "["<<p->info << "]\n" << prefix << " \\__";
-    prefix2 = prefix + " |  ";
-    print_nodes(p->f_dret, os, prefix2);
-    os << "\n" << prefix << " \\__";
-    prefix2 = prefix + "    ";
-    print_nodes(p->f_esq, os, prefix2);
+    if (n->fesq->info < n->fdret->info) {
+      if (n->fesq->info < n->info) {
+        T aux = n->info;
+        n->info = n->fesq->info;
+        n->fesq->info = aux;
+        enfonsa(n->fesq);
+      }
+    }
+    else {
+      if (n->fdret->info < n->info) {
+        T aux = n->info;
+        n->info = n->fdret->info;
+        n->fdret->info = aux;
+        enfonsa(n->fdret);
+      }
+    }
   }
 }
