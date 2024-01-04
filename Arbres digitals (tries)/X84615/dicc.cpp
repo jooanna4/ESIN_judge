@@ -21,10 +21,11 @@ class dicc {
 
   private:
     struct node {
-      char _c;   // Símbol posició i-èssima de la clau
-      node* _pf; // Primer fill, apunta a símbols de la següent posició
-      node* _sg; // Següent germà, apunta a símbols de la mateixa posició
-      node(const char &c, node* pf = NULL, node* sg = NULL);
+      char _c;    // Símbol posició i-èssima de la clau
+      node* _esq; // Fill esquerra, apunta a símbols mateixa posició formant un BST
+      node* _cen; // Fill central, apunta a símbols següent posició
+      node* _dre; // Fill dret, apunta a símbols mateixa posició formant un BST
+      node(const char &c, node* esq = NULL, node* cen = NULL, node* dre = NULL);
     };
     node* _arrel;
 
@@ -51,22 +52,24 @@ vector<nat> dicc::freq_longituds() const {
 
 void dicc::maxima_longitud(node *n, int it, int &max) {
     if (n != nullptr) {
-        maxima_longitud(n->_pf, it+1, max);
+        maxima_longitud(n->_esq, it, max);
 
         if (n->_c == '#' && it > max)
             max = it;
         
-        maxima_longitud(n->_sg, it, max);
+        maxima_longitud(n->_cen, it+1, max);
+        maxima_longitud(n->_dre, it, max);
     }
 }
 
 void dicc::frequencies(node *n, vector<nat>&vec, int it) {
     if (n != nullptr) {
-        frequencies(n->_pf, vec, it+1);
+        frequencies(n->_esq, vec, it);
 
         if (n->_c == '#')
             vec[it] += 1;
 
-        frequencies(n->_sg, vec, it);
+        frequencies(n->_cen, vec, it+1);
+        frequencies(n->_dre, vec, it);
     }
 }
