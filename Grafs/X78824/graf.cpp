@@ -1,4 +1,5 @@
 #include <vector>
+#include <queue>
 using namespace std;
 typedef unsigned int nat;
 
@@ -30,19 +31,23 @@ class graf {
 // Aquí va la implementació del mètode públic hi_ha_cami i privats addicionals
 bool graf::hi_ha_cami(nat ini, nat fi) const {
     if (ini == fi) return true;
-    else if (a[ini][fi]) return true;
+    else if (m == 0) return false;
     else {
-        int i = ini, j = 0;
-        bool found = false;
-        while (i < n && j < n && not found) {
-            if (i == ini && j == fi) found = true;
-            else if (i != j && a[i][j]) {
-                i = j;
-                j++;
-            }
-            else {
-                j++;
+        vector<bool> visitat(n, false);
+        queue<int> q;
+        q.push(ini);
+        visitat[ini] = true;
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            for (int i = 0; i < n; i++) {
+                if (a[node][i] && !visitat[i]) {
+                    if (i == fi) return true;
+                    q.push(i);
+                    visitat[i] = true;
+                }
             }
         }
+        return false;
     }
 }
