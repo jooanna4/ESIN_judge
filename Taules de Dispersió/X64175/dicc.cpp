@@ -59,5 +59,32 @@ class dicc {
 // Aquí va la implementació dels mètodes públics factor_de_carrega, redispersio i
 // dels mètodes privats addicionals
 float dicc::factor_de_carrega() const {
-    
+    return float(_quants)/float(_M);
 }
+
+void dicc::redispersio() {
+  dicc dic2(_M*2+1);
+  for (int i = 0; i < _M; i++) {
+    node_hash *aux = _taula[i];
+    while (aux != nullptr) {
+      dic2.insereix(aux->_k);
+      aux = aux->_seg;
+    }
+  }
+
+  _M = dic2._M;
+  _quants = dic2._quants;
+  _taula = new node_hash*[_M];
+  for (int i = 0; i < _M; i++) {
+    _taula[i] = nullptr;
+  }
+
+  for (int i = 0; i < _M; i++) {
+    node_hash *aux = dic2._taula[i];
+    while (aux != nullptr) {
+      insereix(aux->_k);
+      aux = aux->_seg;
+    }
+  }
+}
+
